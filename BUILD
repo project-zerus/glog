@@ -1,12 +1,17 @@
 licenses(['notice'])
 
+config_setting(
+  name = 'darwin',
+  values = {
+    'cpu': 'darwin',
+  }
+)
+
 cc_library(
   name = 'glog',
   visibility = ['//visibility:public'],
   deps = [
     '//external:gflags'
-  ],
-  hdrs = [
   ],
   srcs = [
     'src/demangle.cc',
@@ -18,7 +23,10 @@ cc_library(
     'src/vlog_is_on.cc',
   ],
   includes = [
-    '__build__/linux/src',
-    'src',
+    'include'
   ],
+  copts = select({
+    ':darwin': ['-iquoteglog/__build__/darwin/src'],
+    '//conditions:default': ['-iquoteglog/__build__/linux/src'],
+  }) + ['-iquoteglog/src'],
 )
